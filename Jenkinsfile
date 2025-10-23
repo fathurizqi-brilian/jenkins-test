@@ -4,17 +4,39 @@ pipeline {
             image 'hashicorp/terraform:1.7.0'
         }
     }
+
+    environment {
+        AWS_DEFAULT_REGION = 'ap-southeast-1'
+    }
+
     stages {
-        stage('Init') {
-            steps { sh 'terraform init' }
+        stage('Terraform Init') {
+            steps {
+                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh 'terraform init'
+                }
+            }
         }
-        stage('Plan') {
-            steps { sh 'terraform plan' }
+
+        stage('Terraform Plan') {
+            steps {
+                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh 'terraform plan -out=tfplan'
+                }
+            }
         }
-        stage('Init') {
-            steps { sh 'terraform apply' }
+
+        stage('Terraform Apply') {
+            when { branch 'main' }
+            steps {
+                input message: "Approve apply?"
+                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh 'terraform apply -auto-approve tfplan'
+                }
+            }
         }
     }
+
     post {
         always {
             archiveArtifacts artifacts: '**/tfplan', allowEmptyArchive: true
