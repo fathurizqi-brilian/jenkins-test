@@ -1,43 +1,46 @@
 pipeline {
+    agent any
+
     environment {
         AWS_DEFAULT_REGION = 'ap-southeast-1'
+        TERRAFORM_VERSION = '1.7.0'
+        TERRAFORM_PATH = "${WORKSPACE}/bin"
+        PATH = "${WORKSPACE}/bin:${PATH}"
     }
 
     stages {
         stage('Setup Terraform') {
             steps {
                 sh '''
-                mkdir -p $HOME/bin
-                curl -fsSL https://releases.hashicorp.com/terraform/1.7.0/terraform_1.7.0_linux_amd64.zip -o terraform.zip
-                unzip terraform.zip -d $HOME/bin
-                export PATH=$PATH:$HOME/bin
+                mkdir -p $TERRAFORM_PATH
+                if [ ! -f "$TERRAFORM_PATH/terraform" ]; then
+                    echo "Downloading Terraform ${TERRAFORM_VERSION}..."
+                    curl -fsSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform.zip
+                    unzip -o terraform.zip -d $TERRAFORM_PATH
+                    rm terraform.zip
+                fi
                 terraform -version
                 '''
             }
         }
-        stage('Terraform Init') {
+
+        stage('Init') {
             steps {
-                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh 'terraform init'
-                }
+                sh 'terraform init'
             }
         }
 
-        stage('Terraform Plan') {
+        stage('Plan') {
             steps {
-                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh 'terraform plan -out=tfplan'
-                }
+                sh 'terraform plan -out=tfplan'
             }
         }
 
-        stage('Terraform Apply') {
+        stage('Apply') {
             when { branch 'main' }
             steps {
-                input message: "Approve apply?"
-                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh 'terraform apply -auto-approve tfplan'
-                }
+                input message: 'Approve apply?'
+                sh 'terraform apply -auto-approve tfplan'
             }
         }
     }
