@@ -1,5 +1,5 @@
 def call(Map config = [:]) {
-    def tfDir = config.get('tfDir', 'terraform-script')
+    def tfDir = config.get('tfDir', 'terraform-script') // default now points to terraform-script
     def awsCreds = config.get('awsCreds', 'aws-creds')
     def region = config.get('region', 'ap-southeast-1')
 
@@ -7,17 +7,18 @@ def call(Map config = [:]) {
         agent any
 
         environment {
-            AWS_DEFAULT_REGION = config.get('region', 'ap-southeast-1')
+            AWS_DEFAULT_REGION = region
         }
 
         stages {
             stage('Init') {
                 steps {
                     dir(tfDir) {
-                    withCredentials([aws(credentialsId: config.get('awsCreds', 'aws-creds'),
-                                         accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                                         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        sh 'terraform init'
+                        withCredentials([aws(credentialsId: awsCreds,
+                                             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                                             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                            sh 'terraform init'
+                        }
                     }
                 }
             }
@@ -25,9 +26,6 @@ def call(Map config = [:]) {
             stage('Plan') {
                 steps {
                     dir(tfDir) {
-                    withCredentials([aws(credentialsId: config.get('awsCreds', 'aws-creds'),
-                                         accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                                         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         sh 'terraform plan -out=tfplan'
                     }
                 }
@@ -37,10 +35,7 @@ def call(Map config = [:]) {
                 when { branch 'main' }
                 steps {
                     dir(tfDir) {
-                    input message: 'Approve apply?'
-                    withCredentials([aws(credentialsId: config.get('awsCreds', 'aws-creds'),
-                                         accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                                         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        input message: 'Approve apply?'
                         sh 'terraform apply -auto-approve tfplan'
                     }
                 }
