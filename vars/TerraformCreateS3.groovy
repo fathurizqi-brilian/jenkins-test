@@ -6,10 +6,6 @@ def call(Map config = [:]) {
     pipeline {
         agent any
 
-        environment {
-            AWS_DEFAULT_REGION = region
-        }
-
         stages {
             stage('Init') {
                 steps {
@@ -21,7 +17,10 @@ def call(Map config = [:]) {
                                 secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                             )
                         ]) {
-                            sh 'terraform init'
+                            sh """
+                                export AWS_DEFAULT_REGION=${region}
+                                terraform init
+                            """
                         }
                     }
                 }
@@ -30,7 +29,10 @@ def call(Map config = [:]) {
             stage('Plan') {
                 steps {
                     dir(tfDir) {
-                        sh 'terraform plan -out=tfplan'
+                        sh """
+                            export AWS_DEFAULT_REGION=${region}
+                            terraform plan -out=tfplan
+                        """
                     }
                 }
             }
@@ -40,7 +42,10 @@ def call(Map config = [:]) {
                 steps {
                     dir(tfDir) {
                         input message: 'Approve apply?'
-                        sh 'terraform apply -auto-approve tfplan'
+                        sh """
+                            export AWS_DEFAULT_REGION=${region}
+                            terraform apply -auto-approve tfplan
+                        """
                     }
                 }
             }
