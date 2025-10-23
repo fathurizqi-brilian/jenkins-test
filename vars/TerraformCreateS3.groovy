@@ -13,6 +13,7 @@ def call(Map config = [:]) {
         stages {
             stage('Init') {
                 steps {
+                    dir(tfDir) {
                     withCredentials([aws(credentialsId: config.get('awsCreds', 'aws-creds'),
                                          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                                          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
@@ -23,6 +24,7 @@ def call(Map config = [:]) {
 
             stage('Plan') {
                 steps {
+                    dir(tfDir) {
                     withCredentials([aws(credentialsId: config.get('awsCreds', 'aws-creds'),
                                          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                                          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
@@ -34,6 +36,7 @@ def call(Map config = [:]) {
             stage('Apply') {
                 when { branch 'main' }
                 steps {
+                    dir(tfDir) {
                     input message: 'Approve apply?'
                     withCredentials([aws(credentialsId: config.get('awsCreds', 'aws-creds'),
                                          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
