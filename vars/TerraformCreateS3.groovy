@@ -7,7 +7,7 @@ def call(Map config = [:]) {
         agent any
 
         stages {
-            stage('Init') {
+            stage('Init & Plan ') {
                 steps {
                     dir(tfDir) {
                         withCredentials([
@@ -20,19 +20,9 @@ def call(Map config = [:]) {
                             sh """
                                 export AWS_DEFAULT_REGION=${region}
                                 terraform init
+                                terraform plan -out=tfplan
                             """
                         }
-                    }
-                }
-            }
-
-            stage('Plan') {
-                steps {
-                    dir(tfDir) {
-                        sh """
-                            export AWS_DEFAULT_REGION=${region}
-                            terraform plan -out=tfplan
-                        """
                     }
                 }
             }
