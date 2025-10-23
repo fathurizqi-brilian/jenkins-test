@@ -26,7 +26,7 @@ variable "bucket_name" {
 }
 
 # Create S3 bucket
-resource "aws_s3_bucket" "demo_bucket" {
+resource "aws_s3_bucket" "demo_bucket_s3" {
   bucket = var.bucket_name
 
   tags = {
