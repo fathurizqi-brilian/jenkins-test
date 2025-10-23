@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = 'ap-southeast-1'
-        TERRAFORM_VERSION = '1.7.0'
+        TERRAFORM_VERSION = '1.11.0'
         TERRAFORM_PATH = "${WORKSPACE}/bin"
         PATH = "${WORKSPACE}/bin:${PATH}"
     }
@@ -26,13 +26,17 @@ pipeline {
 
         stage('Init') {
             steps {
-                sh 'terraform init'
+                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh 'terraform init'
+                }
             }
         }
 
         stage('Plan') {
             steps {
-                sh 'terraform plan -out=tfplan'
+                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh 'terraform plan -out=tfplan'
+                }
             }
         }
 
@@ -40,7 +44,9 @@ pipeline {
             when { branch 'main' }
             steps {
                 input message: 'Approve apply?'
-                sh 'terraform apply -auto-approve tfplan'
+                withCredentials([aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh 'terraform apply -auto-approve tfplan'
+                }
             }
         }
     }
