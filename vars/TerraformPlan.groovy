@@ -3,23 +3,19 @@ def call(Map config = [:]) {
     def awsCreds = config.get('awsCreds', 'aws-creds')
     def region = config.get('region', 'ap-southeast-1')
 
-    stage('Init & Plan ') {
-        steps {
-            dir(tfDir) {
-                withCredentials([
-                    aws(
-                        credentialsId: awsCreds,
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    )
-                ]) {
-                    sh """
-                        export AWS_DEFAULT_REGION=${region}
-                        terraform init
-                        terraform plan -out=tfplan
-                    """
-                }
+        dir(tfDir) {
+            withCredentials([
+                aws(
+                    credentialsId: awsCreds,
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                )
+            ]) {
+                sh """
+                    export AWS_DEFAULT_REGION=${region}
+                    terraform init
+                    terraform plan -out=tfplan
+                """
             }
         }
     }
-}
