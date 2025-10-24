@@ -29,7 +29,14 @@ def call(Map config = [:]) {
 
             stage('Apply') {
                 steps {
-                    dir(tfDir) {
+                    dir(tfDir) 
+                        withCredentials([
+                            aws(
+                                credentialsId: awsCreds,
+                                accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                                secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                            )
+                        ]) {
                         input message: 'Approve apply?'
                         sh """
                             export AWS_DEFAULT_REGION=${region}
