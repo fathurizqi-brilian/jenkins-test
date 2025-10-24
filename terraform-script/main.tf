@@ -34,3 +34,16 @@ resource "aws_s3_bucket" "demo_bucket" {
     Environment = "dev"
   }
 }
+
+# resource "aws_s3_bucket_lifecycle_configuration" "demo_lifecycle" {
+#   bucket = aws_s3_bucket.demo_bucket.id
+
+#   rule {
+#     id     = "abort-incomplete-multipart-uploads"
+#     status = "Enabled"
+
+#     abort_incomplete_multipart_upload {
+#       days_after_initiation = 7  # Delete incomplete parts after 7 days
+#     }
+#   }
+# }
