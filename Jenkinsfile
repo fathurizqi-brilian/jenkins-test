@@ -8,7 +8,7 @@ SayHello("Fathurizqi Azhari")
         stages {
             TerraformPlan(region: 'ap-southeast-1', awsCreds: 'aws-creds')
             TerraformApply(region: 'ap-southeast-1', awsCreds: 'aws-creds')
-
+        }
         post {
             always {
                 archiveArtifacts artifacts: '**/tfplan', allowEmptyArchive: true
