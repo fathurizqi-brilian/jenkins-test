@@ -28,7 +28,6 @@ def call(Map config = [:]) {
             }
 
             stage('Apply') {
-                when { branch 'main' }
                 steps {
                     dir(tfDir) {
                         input message: 'Approve apply?'
