@@ -22,7 +22,7 @@ variable "aws_region" {
 variable "bucket_name" {
   description = "Name of the S3"
   type        = string
-  default     = "test-pipeline"
+  default     = "test-pipeline-898203562451-bucket"
 }
 
 # Create S3 bucket
