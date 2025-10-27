@@ -6,7 +6,7 @@ SayHello("Fathurizqi Azhari")
         agent {
             docker {
                 image 'hashicorp/terraform:latest'
-                args '--entrypoint=""'
+                args '--entrypoint=terraform'
                 label 'agent2-terraform'
             }
         }
