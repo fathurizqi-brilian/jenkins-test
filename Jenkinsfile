@@ -3,7 +3,13 @@
 SayHello("Fathurizqi Azhari")
 
     pipeline {
-        agent any
+        agent {
+            docker {
+                image 'hashicorp/terraform:light'
+                args '-v /var/run/docker.sock:/var/run/docker.sock'
+                label 'agent2-terraform'
+            }
+        }
 
         stages {
             stage('Init & Plan ') {
