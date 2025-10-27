@@ -5,8 +5,8 @@ SayHello("Fathurizqi Azhari")
     pipeline {
         agent {
             docker {
-                image 'fathur/terraform-docker-agent'
-                args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock'
+                image 'hashicorp/terraform:latest'
+                args '-v /var/run/docker.sock:/var/run/docker.sock'
                 label 'agent2-terraform'
             }
         }
