@@ -5,7 +5,7 @@ SayHello("Fathurizqi Azhari")
     pipeline {
         agent {
             docker {
-                image 'sonarsource/sonar-scanner-cli:latest'
+                //image 'sonarsource/sonar-scanner-cli:latest'
                 label 'agent2'
             }
         }
