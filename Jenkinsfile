@@ -6,7 +6,7 @@ SayHello("Fathurizqi Azhari")
         agent {
             docker {
                 image 'hashicorp/terraform:light'
-                args '-v /var/run/docker.sock:/var/run/docker.sock'
+                args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock'
                 label 'agent2-terraform'
             }
         }
