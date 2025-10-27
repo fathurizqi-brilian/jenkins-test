@@ -3,15 +3,15 @@
 SayHello("Fathurizqi Azhari")
 
     pipeline {
-        // agent {
-        //     docker {
-        //         image 'sonarsource/sonar-scanner-cli:latest'
-        //         label 'agent2'
-        //     }
-        // }
         agent {
-            label 'agent2'
+            docker {
+                image 'sonarsource/sonar-scanner-cli:latest'
+                label 'agent2'
+            }
         }
+        // agent {
+        //     label 'agent2'
+        // }
 
         stages {
             stage('Init & Plan ') {
