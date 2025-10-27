@@ -11,10 +11,8 @@ def call(Map config = [:]) {
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                 )
             ]) {
-                sh """
-                    export AWS_DEFAULT_REGION=${region}
-                    terraform apply -auto-approve tfplan
-                """
+                sh 'export AWS_DEFAULT_REGION=${region}'
+                //sh 'terraform apply -auto-approve tfplan'
             }
         }
 }

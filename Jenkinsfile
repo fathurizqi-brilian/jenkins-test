@@ -16,14 +16,14 @@ SayHello("Fathurizqi Azhari")
         stages {
             stage('Init & Plan ') {
                 steps {
-                    //TerraformPlan(region: 'ap-southeast-1', awsCreds: 'aws-creds')
+                    TerraformPlan(region: 'ap-southeast-1', awsCreds: 'aws-creds')
                     echo "Terraform Plan Succeed"
                 }
             }
 
             stage('Apply') {
                 steps {
-                    //TerraformApply(region: 'ap-southeast-1', awsCreds: 'aws-creds')
+                    TerraformApply(region: 'ap-southeast-1', awsCreds: 'aws-creds')
                     echo "Terraform Apply Succeed"
                 }
             }

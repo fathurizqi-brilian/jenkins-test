@@ -11,11 +11,10 @@ def call(Map config = [:]) {
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                 )
             ]) {
-                sh """
-                    export AWS_DEFAULT_REGION=${region}
-                    terraform init
-                    terraform plan -out=tfplan
-                """
+                sh 'export AWS_DEFAULT_REGION=${region}'
+                echo 'region=${region}'
+                //sh 'terraform init'
+                //sh 'terraform plan -out=tfplan'
             }
         }
     }
