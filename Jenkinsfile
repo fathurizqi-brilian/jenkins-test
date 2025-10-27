@@ -5,9 +5,8 @@ SayHello("Fathurizqi Azhari")
     pipeline {
         agent {
             docker {
-                image 'hashicorp/terraform:latest'
-                args '--entrypoint=terraform'
-                label 'agent2-terraform'
+                image 'sonarsource/sonar-scanner-cli:latest'
+                label 'agent2'
             }
         }
 
